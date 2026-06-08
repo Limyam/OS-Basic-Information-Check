@@ -13,7 +13,7 @@ from openpyxl.styles import Font, PatternFill, Alignment
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # ── 配置 ──────────────────────────────────────────────
-SHEET_NAME = 'Vkiau店铺折扣 库存 预售汇总5.18'
+SHEET_NAME = 'Vkiau店铺折扣 库存 预售汇总6.01'
 
 # 通用基础列 (所有子表都包含): D, E, G, H, I, Z + 重量/长/宽/高
 BASE_COLS = [3, 4, 6, 7, 8, 25]
@@ -40,6 +40,36 @@ SBY001_COLS = [31, 32]
 SBY001_HEADERS = [
     "店铺（可用量-待审订单预占）SBY001",
     "Inventory on the platform（SBY001）店铺后台库存",
+]
+
+
+# ── 新增：广告操作判断（计算型）────────────────────────
+def compute_ad_judgment(ws):
+    """按PID分组，统计MID数量和可售天数<=7的MID数量"""
+    from collections import defaultdict
+    data = defaultdict(lambda: {'mids': set(), 'lte7': set()})
+
+    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, values_only=True):
+        pid = row[3]   # Product ID
+        mid = row[6]   # Variation ID
+        sell_days = safe_float(row[39])  # Available selling days 可售天数
+
+        if pid is None:
+            continue
+        pid = str(pid)
+        if mid is not None:
+            data[pid]['mids'].add(mid)
+            if sell_days is not None and sell_days <= 7:
+                data[pid]['lte7'].add(mid)
+
+    results = [(pid, len(d['mids']), len(d['lte7']))
+               for pid, d in sorted(data.items())]
+    return results
+
+
+COMPUTED_SHEETS = [
+    ("广告操作判断", compute_ad_judgment,
+     ["PID", "MID数量", "可售天数小于等于7的MID数量"]),
 ]
 
 
@@ -177,6 +207,13 @@ def build_workbook(input_path):
     total = 0
     for sheet_name, filter_func, out_cols, headers in SHEETS_CONFIG:
         rows = extract_rows(ws, filter_func, out_cols)
+        total += len(rows)
+        ws_out = out_wb.create_sheet(title=sheet_name)
+        write_sheet(ws_out, rows, headers)
+        print(f'  [{sheet_name}] {len(rows)} 行')
+
+    for sheet_name, compute_func, headers in COMPUTED_SHEETS:
+        rows = compute_func(ws)
         total += len(rows)
         ws_out = out_wb.create_sheet(title=sheet_name)
         write_sheet(ws_out, rows, headers)
