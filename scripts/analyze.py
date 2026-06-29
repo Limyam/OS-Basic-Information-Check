@@ -16,7 +16,7 @@ from collections import defaultdict
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # ── 配置 ──────────────────────────────────────────────
-SHEET_NAME = 'Vkiau店铺折扣 库存 预售汇总6.10'
+SHEET_NAME = 'Vkiau店铺折扣 库存 预售汇总6.24'
 
 # 列名常量（用于查找和输出）
 COL_PRODUCT_ID = "Product ID"
@@ -184,9 +184,30 @@ def compute_ad_judgment(ws, col_map):
     return results
 
 
+def compute_mid_sell_days(ws, col_map):
+    """列出每个PID下每个MID及其可售天数"""
+    idx_pid = col_map[COL_PRODUCT_ID]
+    idx_mid = col_map[COL_VARIATION_ID]
+    idx_sell_days = col_map[COL_SELL_DAYS]
+
+    results = []
+    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, values_only=True):
+        pid = row[idx_pid]
+        mid = row[idx_mid]
+        sell_days = safe_float(row[idx_sell_days])
+
+        if pid is not None and mid is not None:
+            results.append((str(pid), str(mid), sell_days if sell_days is not None else ''))
+
+    results.sort(key=lambda x: (x[0], x[1]))
+    return results
+
+
 COMPUTED_SHEETS = [
     ("广告操作判断", compute_ad_judgment,
      ["PID", "MID数量", "可售天数小于等于7的MID数量"]),
+    ("MID可售天数明细", compute_mid_sell_days,
+     ["PID", "MID", "MID可售天数"]),
 ]
 
 
