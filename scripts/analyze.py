@@ -16,7 +16,7 @@ from collections import defaultdict
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # ── 配置 ──────────────────────────────────────────────
-SHEET_NAME = 'Vkiau店铺折扣 库存 预售汇总9.18'
+SHEET_NAME = 'Vkiau店铺折扣 库存 预售汇总9.21'
 
 # 列名规格: key → [候选列名...]（新列名在前，旧列名作为兼容回退）
 COL_SPECS = {
