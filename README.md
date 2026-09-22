@@ -85,10 +85,10 @@ The Excel file must contain a worksheet named `Vkiau店铺折扣 库存 预售�
 
 ## Install as Claude Code Skill
 
-Clone this repository to `~/.claude/skills/os-shop-analyzer/` to use it as a Claude Code skill.
+Clone this repository to `~/.claude/skills/OS-Basic-Information-Check/` to use it as a Claude Code skill.
 
 ```bash
-git clone https://github.com/Limyam/OS-Basic-Information-Check.git ~/.claude/skills/os-shop-analyzer/
+git clone https://github.com/Limyam/OS-Basic-Information-Check.git ~/.claude/skills/OS-Basic-Information-Check/
 ```
 
 ## Dependencies

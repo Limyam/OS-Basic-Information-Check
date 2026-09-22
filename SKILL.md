@@ -1,5 +1,5 @@
 ---
-name: os-shop-analyzer
+name: OS-Basic-Information-Check
 description: OS店铺数据大盘分析工具。分析Shopee/Tokopedia等店铺的库存偏差(Gap200/Gap1000)、发货时间异常、重量异常、名称含"Habis"已售罄标记异常、广告操作判断、MID可售天数。读取"Vkiau店铺折扣 库存 预售汇总{MM.DD}"工作表（每周一三五更新），按列名匹配（兼容新旧列名），输出结构化的分析结果Excel。
 triggers:
   - "OS店铺分析"
@@ -117,7 +117,7 @@ python scripts/analyze.py --input "数据.xlsx" --output "结果.xlsx"
 ## 文件结构
 
 ```
-OS店铺分析skill/
+OS-Basic-Information-Check/
 ├── SKILL.md              # 本文件
 ├── scripts/
 │   └── analyze.py        # 核心分析脚本

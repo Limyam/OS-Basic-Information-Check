@@ -85,10 +85,10 @@ Excel 文件必须包含名为 `Vkiau店铺折扣 库存 预售汇总{MM.DD}`（
 
 ## 安装为 Claude Code Skill
 
-将本仓库克隆到 `~/.claude/skills/os-shop-analyzer/` 目录即可作为 Claude Code 的 skill 使用。
+将本仓库克隆到 `~/.claude/skills/OS-Basic-Information-Check/` 目录即可作为 Claude Code 的 skill 使用。
 
 ```bash
-git clone https://github.com/Limyam/OS-Basic-Information-Check.git ~/.claude/skills/os-shop-analyzer/
+git clone https://github.com/Limyam/OS-Basic-Information-Check.git ~/.claude/skills/OS-Basic-Information-Check/
 ```
 
 ## 依赖
