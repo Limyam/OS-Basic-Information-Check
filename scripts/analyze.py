@@ -129,11 +129,25 @@ def is_true(v):
     return str(v).upper() == 'TRUE'
 
 
+def _iter_data_rows(ws, cols):
+    """从第 2 行起遍历数据行，列范围收窄到实际用到的列。
+
+    导出文件里的空格式残留会把 ws.max_column 撑到上万（实测某份 983 行文件
+    真实数据只占前 24 列，max_column 却是 16283），按默认全宽遍历时每行都要
+    构造一个上万长的元组，是主要的耗时来源。收窄后索引含义不变（仍以 A 列为
+    0），结果与全宽遍历完全一致。
+    """
+    return ws.iter_rows(
+        min_row=2, max_row=ws.max_row,
+        max_col=max(cols.values()) + 1, values_only=True,
+    )
+
+
 def extract_rows(ws, filter_func, cols, out_col_keys):
     """遍历工作表，筛选符合条件的行，返回输出列的值列表。"""
     out_indices = [cols[k] for k in out_col_keys]
     results = []
-    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, values_only=True):
+    for row in _iter_data_rows(ws, cols):
         if filter_func(row, cols):
             results.append(tuple(row[i] for i in out_indices))
     return results
@@ -208,7 +222,7 @@ def compute_ad_judgment(ws, cols):
     idx_mid = cols['variation_id']
     idx_sell_days = cols['sell_days']
 
-    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, values_only=True):
+    for row in _iter_data_rows(ws, cols):
         pid = row[idx_pid]
         mid = row[idx_mid]
         sell_days = safe_float(row[idx_sell_days])
@@ -233,7 +247,7 @@ def compute_mid_sell_days(ws, cols):
     idx_sell_days = cols['sell_days']
 
     results = []
-    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, values_only=True):
+    for row in _iter_data_rows(ws, cols):
         pid = row[idx_pid]
         mid = row[idx_mid]
         sell_days = safe_float(row[idx_sell_days])
